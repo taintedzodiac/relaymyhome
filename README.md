@@ -20,4 +20,8 @@ Installation & Usage (Max OS X 10.8)
 
 Credits
 =======
-All credit for the original idea of duplicating StreetPass Relays goes to the many folks [listed here](https://docs.google.com/spreadsheet/lv?key=0AvvH5W4E2lIwdEFCUkxrM085ZGp0UkZlenp6SkJablE&f=true&noheader=false&gid=3). All I've done is automated the process that they discovered.
+All credit for the original idea of duplicating StreetPass Relays goes to the many folks [listed here](https://docs.google.com/spreadsheet/lv?key=0AvvH5W4E2lIwdEFCUkxrM085ZGp0UkZlenp6SkJablE&f=true&noheader=true&gid=0). All I've done is automated the process that they discovered.
+
+Want to Help?
+=============
+If you'd like to improve this script, please make the changes and submit a pull request. Thanks in advance!
