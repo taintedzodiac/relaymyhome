@@ -1,14 +1,15 @@
 relaymyhome
 ===========
-
 OSX Bash Script for automating the process of getting Nintendo 3DS StreetPass hits via Internet Connection Sharing.
 
+What You'll Need
+================
+* A Nintendo 3DS with WiFi turned on, all apps/games closed, and in sleep mode (lid closed).
+* An Apple computer running OS X (only tested on 10.8, although earlier versions may work as well) with both wired and wireless network interfaces (MacBook Airs will need a USB or Thunderbolt to Ethernet adapter for the wired connection).
+* An account with administrator rights on the computer.
 
 Installation & Usage (Max OS X 10.8)
 ====================================
-
-**First of all -- Make sure your 3DS is on, all 3DS games/apps have been closed, and it is in sleep mode.**
-
 1. Download the script file from this page. The easy way is to download the ZIP file using the "Download ZIP" button on the bottom right of this page. Double click the downloaded file to unzip it.
 2. Move the **relaymyhome** file to somewhere you can access (if you're completely unfamiliar with using the OSX Termainal, stick it in **Documents**).
 3. Using the WiFi icon in your menu bar at the top of the screen, select "Create Network..." and create a network named **attwifi** and make sure to set *Security* to **None** (you can ignore the Channel option).
