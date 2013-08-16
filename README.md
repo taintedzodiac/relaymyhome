@@ -5,7 +5,7 @@ OSX Bash Script for automating the process of getting Nintendo 3DS StreetPass hi
 What You'll Need
 ================
 * A Nintendo 3DS with WiFi turned on, all apps/games closed, and in sleep mode (lid closed).
-* An Apple computer running OS X (only tested on 10.8, although earlier versions may work as well) with both wired and wireless network interfaces (MacBook Airs will need a USB or Thunderbolt to Ethernet adapter for the wired connection).
+* An Apple computer running OS X (only tested on 10.8, although earlier versions may work as well) with both wired and wireless network interfaces (MacBook Airs will need a USB or Thunderbolt to Ethernet adapter for the wired connection). Your wired connection must be connected to a wired network and able to access the Internet over that connection.
 * An account with administrator rights on the computer.
 
 Installation & Usage (Max OS X 10.8)
