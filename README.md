@@ -2,9 +2,13 @@ relaymyhome
 ===========
 OSX Bash Script for automating the process of getting Nintendo 3DS StreetPass hits via Internet Connection Sharing.
 
+What It Does
+============
+By setting up your Mac computer to act like a StreetPass Relay, you can get StreetPass tags from all over the world. This script cycles through over 20 of the most popular streams in order to fill up your StreetPass queue in 20-30 minutes. Just set your 3DS down, configure your computer, and run the script.
+
 What You'll Need
 ================
-* A Nintendo 3DS with WiFi turned on, all apps/games closed, and in sleep mode (lid closed).
+* A Nintendo 3DS that has **updated firmware (as of August 2013)** with WiFi turned on, all apps/games closed, and in sleep mode (lid closed).
 * An Apple computer running OS X (only tested on 10.8, although earlier versions may work as well) with both wired and wireless network interfaces (MacBook Airs will need a USB or Thunderbolt to Ethernet adapter for the wired connection). Your wired connection must be connected to a wired network and able to access the Internet over that connection.
 * An account with administrator rights on the computer.
 
