@@ -17,7 +17,7 @@ What You'll Need
 * An Apple computer running OS X (only tested on 10.8, although earlier versions may work as well) with both wired and wireless network interfaces (MacBook Airs will need a USB or Thunderbolt to Ethernet adapter for the wired connection). Your wired connection must be connected to a wired network and able to access the Internet over that connection.
 * An account with administrator rights on the computer.
 
-Installation & Usage (Max OS X 10.8)
+Installation & Usage (Mac OS X 10.8)
 ====================================
 1. Download the script file from this page. The easy way is to download the ZIP file using the "Download ZIP" button on the bottom right of this page. Double click the downloaded file to unzip it.
 2. Move the **relaymyhome** file to somewhere you can access (if you're completely unfamiliar with using the OSX Termainal, stick it in **Documents**).
