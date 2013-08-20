@@ -2,6 +2,11 @@ relaymyhome
 ===========
 OSX Bash Script for automating the process of getting Nintendo 3DS StreetPass hits via Internet Connection Sharing.
 
+What's New
+==========
+**v 0.2**
+* New Mode - running the script with the command **./relaymyhome en1 full** will now cause the script to randomly select addresses from the "Extended Prime MAC's" list (currently 160 addresses). While this mode will likely get you more duplicate StreetPasses, it can be run multiple times within the 8-hour cooldown period. You should be able to run this mode, clear out your StreetPass hits, and run the script again roughly 10 times before you run out of potential StreetPass hits within the 8-hour cooldown window.
+
 What It Does
 ============
 By setting up your Mac computer to act like a StreetPass Relay, you can get StreetPass tags from all over the world. This script cycles through over 20 of the most popular streams in order to fill up your StreetPass queue in 20-30 minutes. Just set your 3DS down, configure your computer, and run the script.

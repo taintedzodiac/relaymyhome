@@ -27,36 +27,78 @@
 
 #! /bin/bash
 
-addr[0]='00:0D:67:15:2D:82'
-addr[1]='00:0D:67:15:D7:21'
-addr[2]='00:0D:67:15:D5:44'
-addr[3]='00:0D:67:15:D2:59'
-addr[4]='00:0D:67:15:D6:FD'
-addr[5]='4E:53:50:4F:4F:40'
-addr[6]='4E:53:50:4F:4F:41'
-addr[7]='4E:53:50:4F:4F:42'
-addr[8]='4E:53:50:4F:4F:43'
-addr[9]='4E:53:50:4F:4F:44'
-addr[10]='4E:53:50:4F:4F:45'
-addr[11]='4E:53:50:4F:4F:46'
-addr[12]='4E:53:50:4F:4F:47'
-addr[13]='4E:53:50:4F:4F:48'
-addr[14]='4E:53:50:4F:4F:49'
-addr[15]='4E:53:50:4F:4F:4A'
-addr[16]='4E:53:50:4F:4F:4B'
-addr[17]='4E:53:50:4F:4F:4C'
-addr[18]='4E:53:50:4F:4F:4D'
-addr[19]='4E:53:50:4F:4F:4E'
-addr[20]='4E:53:50:4F:4F:4F'
+if  [ $2 == "full" ]
+then
+    # Generate a full list of 160 MAC's when "full" mode is specified
+    # To use full mode: ./relaymyhome en1 full
+    # (Replacing en1 with your specific WiFi interface)
+    # Check the repo at github for more information.
+    echo "Full Mode enabled. Randomly seeding from full list of addresses."
+    
+    # Set the base MAC address
+    baseAddr="4E:53:50:4F:4F:"
+    
+    # Legal characters for MAC
+    Chars=("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0" "A" "B" "C" "D" "E" "F")
+    
+    # Create the addresses programatically
+    count=0
+    for i in "${Chars[@]}"
+    do
+        for j in "${Chars[@]}"
+        do
+            mac=$baseAddr$i$j
+            Addr+=($mac)
+        done
+    done
 
-for a in "${addr[@]}"
-do
-    echo "Cycling WiFi..."
-    sudo ifconfig $1 lladdr $a
-    networksetup -setairportpower $1 off
-    networksetup -setairportpower $1 on
-    echo "Spoofing $1 to $a for 60 seconds"
-    sleep 60
-done
+    for a in {1..20}
+    do
+        selectedAddr=${Addr[$RANDOM % ${#Addr[@]} ]}
+        echo "Cycling WiFi..."
+        sudo ifconfig $1 lladdr $selectedAddr
+        networksetup -setairportpower $1 off
+        networksetup -setairportpower $1 on
+        echo "Spoofing $1 to $selectedAddr for 60 seconds"
+        sleep 60
+    done
+    
+    
+else
+    # This standard set of MAC's will be used in standard mode
+    # Usage: ./relaymyhome en1
+    # (Replacing en1 with your specific WiFi interface)
+    addr[0]='00:0D:67:15:2D:82'
+    addr[1]='00:0D:67:15:D7:21'
+    addr[2]='00:0D:67:15:D5:44'
+    addr[3]='00:0D:67:15:D2:59'
+    addr[4]='00:0D:67:15:D6:FD'
+    addr[5]='4E:53:50:4F:4F:40'
+    addr[6]='4E:53:50:4F:4F:41'
+    addr[7]='4E:53:50:4F:4F:42'
+    addr[8]='4E:53:50:4F:4F:43'
+    addr[9]='4E:53:50:4F:4F:44'
+    addr[10]='4E:53:50:4F:4F:45'
+    addr[11]='4E:53:50:4F:4F:46'
+    addr[12]='4E:53:50:4F:4F:47'
+    addr[13]='4E:53:50:4F:4F:48'
+    addr[14]='4E:53:50:4F:4F:49'
+    addr[15]='4E:53:50:4F:4F:4A'
+    addr[16]='4E:53:50:4F:4F:4B'
+    addr[17]='4E:53:50:4F:4F:4C'
+    addr[18]='4E:53:50:4F:4F:4D'
+    addr[19]='4E:53:50:4F:4F:4E'
+    addr[20]='4E:53:50:4F:4F:4F'
+    
+    for a in "${addr[@]}"
+    do
+        echo "Cycling WiFi..."
+        sudo ifconfig $1 lladdr $a
+        networksetup -setairportpower $1 off
+        networksetup -setairportpower $1 on
+        echo "Spoofing $1 to $a for 60 seconds"
+        sleep 60
+    done
+fi
 
 echo "Cycling of Relays has completed. Time to check your StreetPasses!"
