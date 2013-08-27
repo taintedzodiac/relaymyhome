@@ -20,14 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# RelayMyHome -- v. 0.2
+# RelayMyHome -- v. 0.3
 # by Rob Zimmerman (https://www.github.com/taintedzodiac)
 # View the original source, readme, and license at https://github.com/taintedzodiac/relaymyhome
 # Tested in OS X 10.8 (Mountain Lion)
 
 #! /bin/bash
 
-if  [ $2 == "full" ]
+wservice=`/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airport)'`
+wifi=$(networksetup -listallhardwareports | awk "/$wservice/,/Ethernet/"' getline { print $2 }')
+
+WirelessMAC=$(networksetup -getmacaddress $wifi | awk '{print $3}')
+
+if  [ $1 == "full" ]
 then
     # Generate a full list of 160 MAC's when "full" mode is specified
     # To use full mode: ./relaymyhome en1 full
@@ -56,10 +61,10 @@ then
     do
         selectedAddr=${Addr[$RANDOM % ${#Addr[@]} ]}
         echo "Cycling WiFi..."
-        sudo ifconfig $1 lladdr $selectedAddr
-        networksetup -setairportpower $1 off
-        networksetup -setairportpower $1 on
-        echo "Spoofing $1 to $selectedAddr for 60 seconds"
+        sudo ifconfig $wifi lladdr $selectedAddr
+        networksetup -setairportpower $wifi off
+        networksetup -setairportpower $wifi on
+        echo "Spoofing $wifi to $selectedAddr for 60 seconds"
         sleep 60
     done
     
@@ -93,12 +98,18 @@ else
     for a in "${addr[@]}"
     do
         echo "Cycling WiFi..."
-        sudo ifconfig $1 lladdr $a
-        networksetup -setairportpower $1 off
-        networksetup -setairportpower $1 on
-        echo "Spoofing $1 to $a for 60 seconds"
+        sudo ifconfig $wifi lladdr $a
+        networksetup -setairportpower $wifi off
+        networksetup -setairportpower $wifi on
+        echo "Spoofing $wifi to $a for 60 seconds"
         sleep 60
     done
 fi
 
-echo "Cycling of Relays has completed. Time to check your StreetPasses!"
+ifconfig $wifi lladdr $WirelessMAC
+networksetup -setairportpower $wifi off
+networksetup -setairportpower $wifi on
+
+
+echo "Cycling of Relays has completed, MAC address reverted."
+echo "Time to check your StreetPasses!"
