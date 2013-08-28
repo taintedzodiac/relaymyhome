@@ -9,7 +9,7 @@ What's New
 Specifying the port (en0,en1,etc.) is no longer necessary. You can now run the program using either of the basic commands:
 
 * **./relaymyhome** (basic mode)
-* **./relaymyhomefull** (full mode with random addresses)
+* **./relaymyhome full** (full mode with random addresses) **Recommended**
 
 Thanks go out to @imariaprime for the changes.
 
