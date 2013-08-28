@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# RelayMyHome -- v. 0.3
+# RelayMyHome -- v. 0.4
 # by Rob Zimmerman (https://www.github.com/taintedzodiac)
 # View the original source, readme, and license at https://github.com/taintedzodiac/relaymyhome
 # Tested in OS X 10.8 (Mountain Lion)
@@ -35,22 +35,22 @@ WirelessMAC=$(networksetup -getmacaddress $wifi | awk '{print $3}')
 if  [ $1 == "full" ]
 then
     # Generate a full list of 160 MAC's when "full" mode is specified
-    # To use full mode: ./relaymyhome en1 full
-    # (Replacing en1 with your specific WiFi interface)
+    # To use full mode: ./relaymyhome full
     # Check the repo at github for more information.
     echo "Full Mode enabled. Randomly seeding from full list of addresses."
     
     # Set the base MAC address
     baseAddr="4E:53:50:4F:4F:"
     
-    # Legal characters for MAC
-    Chars=("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "0" "A" "B" "C" "D" "E" "F")
+    # Legal characters for MAC (Limited range for first digit)
+    CharsA=("0" "1" "2" "3" "4" "5" "6" "7" "8" "9")
+    CharsB=("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "A" "B" "C" "D" "E" "F")
     
     # Create the addresses programatically
     count=0
-    for i in "${Chars[@]}"
+    for i in "${CharsA[@]}"
     do
-        for j in "${Chars[@]}"
+        for j in "${CharsB[@]}"
         do
             mac=$baseAddr$i$j
             Addr+=($mac)
@@ -71,8 +71,7 @@ then
     
 else
     # This standard set of MAC's will be used in standard mode
-    # Usage: ./relaymyhome en1
-    # (Replacing en1 with your specific WiFi interface)
+    # Usage: ./relaymyhome
     addr[0]='00:0D:67:15:2D:82'
     addr[1]='00:0D:67:15:D7:21'
     addr[2]='00:0D:67:15:D5:44'
