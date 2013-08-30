@@ -105,7 +105,7 @@ else
     done
 fi
 
-ifconfig $wifi lladdr $WirelessMAC
+sudo ifconfig $wifi lladdr $WirelessMAC
 networksetup -setairportpower $wifi off
 networksetup -setairportpower $wifi on
 
