@@ -1,17 +1,17 @@
 # The MIT License (MIT)
-# 
+#
 # Copyright (c) 2013 Rob Zimmerman
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,22 +31,44 @@ wservice=`/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airp
 wifi=$(networksetup -listallhardwareports | awk "/$wservice/,/Ethernet/"' getline { print $2 }')
 
 WirelessMAC=$(networksetup -getmacaddress $wifi | awk '{print $3}')
+echo "Original MAC address is: $WirelessMAC"
+
+cleanup()
+{
+    sudo ifconfig $wifi lladdr $WirelessMAC
+    networksetup -setairportpower $wifi off
+    networksetup -setairportpower $wifi on
+
+    echo "Cycling of Relays has completed, MAC address reverted.\n"
+}
+
+ctrl_c()
+{
+  # user quit midway through, so we should revert
+  # the MAC address by calling our cleanup function
+  echo "*** Interrupted ***"
+  cleanup
+  exit $?
+}
+
+# trap keyboard interrupt (control-c) or unexpected quit
+trap ctrl_c SIGINT SIGTERM
 
 if  [ $1 == "full" ]
 then
-    # Generate a full list of 160 MAC's when "full" mode is specified
+    # Generate a full list of 160 MACs when "full" mode is specified
     # To use full mode: ./relaymyhome full
     # Check the repo at github for more information.
     echo "Full Mode enabled. Randomly seeding from full list of addresses."
-    
+
     # Set the base MAC address
     baseAddr="4E:53:50:4F:4F:"
-    
+
     # Legal characters for MAC (Limited range for first digit)
     CharsA=("0" "1" "2" "3" "4" "5" "6" "7" "8" "9")
     CharsB=("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "A" "B" "C" "D" "E" "F")
-    
-    # Create the addresses programatically
+
+    # Create the addresses programmatically
     count=0
     for i in "${CharsA[@]}"
     do
@@ -67,10 +89,10 @@ then
         echo "Spoofing $wifi to $selectedAddr for 60 seconds"
         sleep 60
     done
-    
-    
+
+
 else
-    # This standard set of MAC's will be used in standard mode
+    # This set of MACs will be used in standard mode
     # Usage: ./relaymyhome
     addr[0]='00:0D:67:15:2D:82'
     addr[1]='00:0D:67:15:D7:21'
@@ -93,7 +115,7 @@ else
     addr[18]='4E:53:50:4F:4F:4D'
     addr[19]='4E:53:50:4F:4F:4E'
     addr[20]='4E:53:50:4F:4F:4F'
-    
+
     for a in "${addr[@]}"
     do
         echo "Cycling WiFi..."
@@ -105,10 +127,8 @@ else
     done
 fi
 
-sudo ifconfig $wifi lladdr $WirelessMAC
-networksetup -setairportpower $wifi off
-networksetup -setairportpower $wifi on
+# ... and we are done
 
+cleanup
 
-echo "Cycling of Relays has completed, MAC address reverted."
 echo "Time to check your StreetPasses!"
