@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# RelayMyHome -- v. 0.4
+# RelayMyHome -- v. 0.5
 # by Rob Zimmerman (https://www.github.com/taintedzodiac)
 # View the original source, readme, and license at https://github.com/taintedzodiac/relaymyhome
 # Tested in OS X 10.8 (Mountain Lion)
@@ -39,7 +39,7 @@ cleanup()
     networksetup -setairportpower $wifi off
     networksetup -setairportpower $wifi on
 
-    echo "Cycling of Relays has completed, MAC address reverted.\n"
+    echo "Cycling of Relays has completed, MAC address reverted."
 }
 
 ctrl_c()
@@ -54,7 +54,7 @@ ctrl_c()
 # trap keyboard interrupt (control-c) or unexpected quit
 trap ctrl_c SIGINT SIGTERM
 
-if  [ $1 == "full" ]
+if  [[ $1 == "full" ]]
 then
     # Generate a full list of 160 MACs when "full" mode is specified
     # To use full mode: ./relaymyhome full
