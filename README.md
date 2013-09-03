@@ -4,7 +4,7 @@ OSX Bash Script for automating the process of getting Nintendo 3DS StreetPass hi
 
 What's New
 ==========
-**v 0.5*
+**v 0.5**
 
 Addition of interrupt and error catching so that the MAC address always gets set back to the original address (thanks to @andypiper).
 
