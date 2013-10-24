@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# RelayMyHome -- v. 0.5
-# by Rob Zimmerman (https://www.github.com/taintedzodiac)
-# View the original source, readme, and license at https://github.com/taintedzodiac/relaymyhome
-# Tested in OS X 10.8 (Mountain Lion)
+# RelayMyHome -- v. 1.0
+# Original script by Rob Zimmerman (https://www.github.com/taintedzodiac)
+# See other generous contributors, plus view the source, readme, and license at https://github.com/taintedzodiac/relaymyhome
+# Tested in OS X 10.8 (Mountain Lion) and Mavericks
 
 #! /bin/bash
 
@@ -54,12 +54,11 @@ ctrl_c()
 # trap keyboard interrupt (control-c) or unexpected quit
 trap ctrl_c SIGINT SIGTERM
 
-if  [[ $1 == "full" ]]
+if  [[ $1 == "full" || $1 == "quick" ]]
 then
     # Generate a full list of 160 MACs when "full" mode is specified
     # To use full mode: ./relaymyhome full
     # Check the repo at github for more information.
-    echo "Full Mode enabled. Randomly seeding from full list of addresses."
 
     # Set the base MAC address
     baseAddr="4E:53:50:4F:4F:"
@@ -79,15 +78,24 @@ then
         done
     done
 
-    for a in {1..20}
+    if [[ $1 == "full" ]]
+    then 
+      num=5
+      echo "Full Mode enabled. Randomly seeding five addresses from full list."
+    else
+      num=2
+      echo "Quick Mode enabled. Randomly seeding two addresses from full list."
+    fi
+    
+    for a in $(seq 1 $num)
     do
         selectedAddr=${Addr[$RANDOM % ${#Addr[@]} ]}
         echo "Cycling WiFi..."
         sudo ifconfig $wifi lladdr $selectedAddr
         networksetup -setairportpower $wifi off
         networksetup -setairportpower $wifi on
-        echo "Spoofing $wifi to $selectedAddr for 60 seconds"
-        sleep 60
+        echo "Spoofing $wifi to $selectedAddr for 90 seconds ($a of $num)"
+        sleep 90
     done
 
 
@@ -99,31 +107,19 @@ else
     addr[2]='00:0D:67:15:D5:44'
     addr[3]='00:0D:67:15:D2:59'
     addr[4]='00:0D:67:15:D6:FD'
-    addr[5]='4E:53:50:4F:4F:40'
-    addr[6]='4E:53:50:4F:4F:41'
-    addr[7]='4E:53:50:4F:4F:42'
-    addr[8]='4E:53:50:4F:4F:43'
-    addr[9]='4E:53:50:4F:4F:44'
-    addr[10]='4E:53:50:4F:4F:45'
-    addr[11]='4E:53:50:4F:4F:46'
-    addr[12]='4E:53:50:4F:4F:47'
-    addr[13]='4E:53:50:4F:4F:48'
-    addr[14]='4E:53:50:4F:4F:49'
-    addr[15]='4E:53:50:4F:4F:4A'
-    addr[16]='4E:53:50:4F:4F:4B'
-    addr[17]='4E:53:50:4F:4F:4C'
-    addr[18]='4E:53:50:4F:4F:4D'
-    addr[19]='4E:53:50:4F:4F:4E'
-    addr[20]='4E:53:50:4F:4F:4F'
 
+    echo "Standard Mode enabled. Connecting to five Nintendo World addresses."
+    n=1
+    
     for a in "${addr[@]}"
     do
         echo "Cycling WiFi..."
         sudo ifconfig $wifi lladdr $a
         networksetup -setairportpower $wifi off
         networksetup -setairportpower $wifi on
-        echo "Spoofing $wifi to $a for 60 seconds"
-        sleep 60
+        echo "Spoofing $wifi to $a for 90 seconds ($n of 5)"
+        n=$((n+1))
+        sleep 90
     done
 fi
 
