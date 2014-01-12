@@ -1,3 +1,20 @@
+This is a forked version of relaymyhome:
+========================================
+
+* Some variables have been added in place of static numbers.  
+* shebang line is put on #1 so it can function correctly
+* general code clean up
+* Audibly speaks to you when it's done relaying
+
+Future improvements:
+====================
+
+* Better handling of switches
+* Support shirt colors
+* Perhaps make a sqlite3 db of mac addresses to pull from in order to support grabbing least-recently used, and other limiting factors like gender, shirt color, etc..
+* If we're doing db stuff, make it more modular to support different sources. eg: fallback on default generated list if db is absent
+
+
 relaymyhome
 ===========
 OSX Bash Script for automating the process of getting Nintendo 3DS StreetPass hits via Internet Connection Sharing. Gathers the maximum of ten (10) StreetPass hits within about 3-5 minutes.
@@ -12,7 +29,7 @@ Script has been updated for the new "six at a time" feature of StreetPass Relay.
 * Each address in the cycle will now connect for 90 seconds in order to provide more time for the additional data to be sent for all six potential streetpasses. This additional time is more than offset by checking far fewer addresses (see next three points below).
 * Running the script in standard mode ( **./relaymyhome** ) will now only hit the five main Nintendo World addresses. You should be able to run this mode 2-3 times before you run out of streetpasses. This mode also provides the opportunity to get any "special" Miis that are generally only available via these addresses.
 * Running the script in full mode ( **./relaymyhome full** ) will now connect to five random addresses (down from 20), taking a total of 7.5 minutes. This provides 30 potential streetpasses, and should fill your 10 slots reliably.
-* **New mode**: Running the script in quick mode ( **./relaymyhome quick** ) will connect to two random addresses, taking a total of three (3) minutes. This should quickyl fill your 10 streetpasses (out of the 12 potential ones), but will sometimes return fewer than 10.
+* **New mode**: Running the script in quick mode ( **./relaymyhome quick** ) will connect to two random addresses, taking a total of three (3) minutes. This should quickly fill your 10 streetpasses, but will sometimes return fewer than 10.
 
 What It Does
 ============
