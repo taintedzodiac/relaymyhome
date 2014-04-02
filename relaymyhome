@@ -79,7 +79,7 @@ do
     case "${option}" in
         h) usage ; exit ;;
         s) speak=1 ;;
-        s) count=${OPTARG} ;;
+        c) count=${OPTARG} ;;
         *) usage ; exit 1 ;
     esac
 done
@@ -101,20 +101,8 @@ then
     # Set the base MAC address
     baseAddr="4E:53:50:4F:4F:"
 
-    # Legal characters for MAC (Limited range for first digit)
-    CharsA=("0" "1" "2" "3" "4" "5" "6" "7" "8" "9")
-    CharsB=("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "A" "B" "C" "D" "E" "F")
-
-    # Create the addresses programmatically
-    count=0
-    for i in "${CharsA[@]}"
-    do
-        for j in "${CharsB[@]}"
-        do
-            mac=$baseAddr$i$j
-            Addr+=($mac)
-        done
-    done
+    # Create an array for the last octet of the mac address, limited range.
+    Addr=($(for X in {0..159} ; do echo ${X} | awk '{printf "%02X ", $1}'; done ;))
 
     if [[ $1 == "full" ]] ; then
       num=7
