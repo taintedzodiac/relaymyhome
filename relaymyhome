@@ -87,7 +87,7 @@ then
       echo "Quick Mode enabled. Randomly seeding two addresses from full list."
     fi
     
-    for a in $(seq 1 $num)
+    for ((a=1; a<=$num; a++));
     do
         selectedAddr=${Addr[$RANDOM % ${#Addr[@]} ]}
         echo "Cycling WiFi..."
