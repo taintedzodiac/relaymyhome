@@ -1,20 +1,3 @@
-This is a forked version of relaymyhome:
-========================================
-
-* Some variables have been added in place of static numbers.  
-* shebang line is put on #1 so it can function correctly
-* general code clean up
-* Audibly speaks to you when it's done relaying
-
-Future improvements:
-====================
-
-* Better handling of switches
-* Support shirt colors
-* Perhaps make a sqlite3 db of mac addresses to pull from in order to support grabbing least-recently used, and other limiting factors like gender, shirt color, etc..
-* If we're doing db stuff, make it more modular to support different sources. eg: fallback on default generated list if db is absent
-
-
 relaymyhome
 ===========
 OSX Bash Script for automating the process of getting Nintendo 3DS StreetPass hits via Internet Connection Sharing. Gathers the maximum of ten (10) StreetPass hits within about 3-5 minutes.
