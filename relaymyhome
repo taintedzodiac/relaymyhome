@@ -2,7 +2,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2013 Rob Zimmerman
+# Copyright (c) 2013-2014 Rob Zimmerman
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -102,7 +102,7 @@ then
     baseAddr="4E:53:50:4F:4F:"
 
     # Create an array for the last octet of the mac address, limited range.
-    Addr=($(for X in {0..159} ; do echo ${X} | awk '{printf "%02X ", $1}'; done ;))
+    Addr=($(for X in {0..159} ; do echo ${X} | awk '{printf "%s%02X ", "4E:53:50:4F:4F:", $1}'; done ;))
 
     if [[ $1 == "full" ]] ; then
       num=7
