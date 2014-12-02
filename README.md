@@ -4,6 +4,10 @@ OSX Bash Script for automating the process of getting Nintendo 3DS StreetPass hi
 
 What's New
 ==========
+**v 1.1**
+
+Added the Homepass relay MAC addresses
+
 **v 1.0**
 
 Script has been updated for the new "six at a time" feature of StreetPass Relay. The following features have been added/change:
