@@ -6,6 +6,7 @@ What's New
 ==========
 **v 1.1**
 
+* OSX Yosemite support
 * Added the Homepass relay MAC addresses.
 * Updated instructions to use NZ@McD1 network name.
 
