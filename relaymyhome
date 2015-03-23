@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2013 Rob Zimmerman
+# Copyright (c) 2013-2014 Rob Zimmerman
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,24 +22,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# RelayMyHome -- v. 1.0
+# RelayMyHome -- v. 1.1
 # Original script by Rob Zimmerman (https://www.github.com/taintedzodiac)
 # See other generous contributors, plus view the source, readme, and license at https://github.com/taintedzodiac/relaymyhome
 # Tested in OS X 10.8 (Mountain Lion) and Mavericks
-
 
 ### The time we will pause on each MAC address
 relay_time="90"
 sleep_time="10"
 
-wservice="$(/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airport)')"
-wifi="$(networksetup -listallhardwareports | awk "/${wservice}/,/Ethernet/"' getline { print $2 }')"
+wservice=$(/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airport)')
+wifi=$(networksetup -listallhardwareports | awk "/${wservice}/,/Ethernet/"' getline { print $2 }')
 
 WirelessMAC=$(networksetup -getmacaddress "${wifi}" | awk '{print $3}')
 echo "Original MAC address is: $WirelessMAC"
 
 function notify {
-    if [ -z ${speak} ] ; then
+    if [ -z "${speak}" ] ; then
         echo "${@}" ;
     else
         say --interactive=green "${@}" ;
@@ -48,9 +47,9 @@ function notify {
 }
 
 function cleanup {
-    sudo ifconfig ${wifi} lladdr ${WirelessMAC}
-    networksetup -setairportpower ${wifi} off
-    networksetup -setairportpower ${wifi} on
+    sudo ifconfig "${wifi}" lladdr "${WirelessMAC}"
+    networksetup -setairportpower "${wifi}" off
+    networksetup -setairportpower "${wifi}" on
 
     echo "Cycling of Relays has completed, MAC address reverted."
     notify "Time to check your street passes!"
@@ -79,7 +78,6 @@ do
     case "${option}" in
         h) usage ; exit ;;
         s) speak=1 ;;
-        c) count=${OPTARG} ;;
         *) usage ; exit 1 ;
     esac
 done
@@ -98,55 +96,68 @@ then
     # To use full mode: ./relaymyhome full
     # Check the repo at github for more information.
 
-    # Set the base MAC address
-    baseAddr="4E:53:50:4F:4F:"
-
     # Create an array for the last octet of the mac address, limited range.
-    Addr=($(for X in {0..159} ; do echo ${X} | awk '{printf "%02X ", $1}'; done ;))
+    Addr=($(for X in {0..159} ; do echo ${X} | awk '{printf "%s%02X ", "4E:53:50:4F:4F:", $1}'; done ;))
 
-    if [[ $1 == "full" ]] ; then
-      num=7
-      echo "Full Mode enabled. Randomly seeding ${num} addresses from full list."
-    elif [[ $1 == "fuller" ]] ; then
-      num=99
+    if [[ $1 == "full" ]]
+    then
+      num=5
+      echo "Full Mode enabled. Randomly seeding five addresses from full list."
     else
       num=2
       echo "Quick Mode enabled. Randomly seeding ${num} addresses from full list."
     fi
-    
-    for a in $(seq 1 $num)
+
+    for ((a=1; a<=num; a++));
     do
         selectedAddr=${Addr[$RANDOM % ${#Addr[@]} ]}
         echo "Cycling WiFi..."
-        sudo ifconfig $wifi lladdr $selectedAddr
-        networksetup -setairportpower $wifi off
+        sudo ifconfig "${wifi}" lladdr $selectedAddr
+        networksetup -setairportpower "${wifi}" off
         sleep ${sleep_time}
-        networksetup -setairportpower $wifi on
-        echo "Spoofing $wifi to $selectedAddr for ${relay_time} seconds ($a of $num)"
+        networksetup -setairportpower "${wifi}" on
+        echo "Spoofing ${wifi} to ${selectedAddr} for ${relay_time} seconds ($a of $num)"
         sleep ${relay_time}
     done
 
 
 else
     # This set of MACs will be used in standard mode
+    # Taken from: https://docs.google.com/spreadsheet/ccc?key=0AvvH5W4E2lIwdEFCUkxrM085ZGp0UkZlenp6SkJablE#gid=0
     # Usage: ./relaymyhome
     addr[0]='00:0D:67:15:2D:82'
     addr[1]='00:0D:67:15:D7:21'
     addr[2]='00:0D:67:15:D5:44'
     addr[3]='00:0D:67:15:D2:59'
     addr[4]='00:0D:67:15:D6:FD'
+    addr[5]='4E:53:50:4F:4F:40'
+    addr[6]='4E:53:50:4F:4F:41'
+    addr[7]='4E:53:50:4F:4F:42'
+    addr[8]='4E:53:50:4F:4F:43'
+    addr[9]='4E:53:50:4F:4F:44'
+    addr[10]='4E:53:50:4F:4F:45'
+    addr[11]='4E:53:50:4F:4F:46'
+    addr[12]='4E:53:50:4F:4F:47'
+    addr[13]='4E:53:50:4F:4F:48'
+    addr[14]='4E:53:50:4F:4F:49'
+    addr[15]='4E:53:50:4F:4F:4A'
+    addr[16]='4E:53:50:4F:4F:4B'
+    addr[17]='4E:53:50:4F:4F:4C'
+    addr[18]='4E:53:50:4F:4F:4D'
+    addr[19]='4E:53:50:4F:4F:4E'
+    addr[20]='4E:53:50:4F:4F:4F'
 
-    echo "Standard Mode enabled. Connecting to five Nintendo World addresses."
+    echo "Standard Mode enabled. Connecting to the five Nintendo World relays and the sixteen Homepass relays."
     n=1
-    
+
     for a in "${addr[@]}"
     do
         echo "Cycling WiFi..."
-        sudo ifconfig $wifi lladdr $a
-        networksetup -setairportpower $wifi off
+        sudo ifconfig "${wifi}" lladdr $a
+        networksetup -setairportpower "${wifi}" off
         sleep ${sleep_time}
-        networksetup -setairportpower $wifi on
-        echo "Spoofing $wifi to ${a} for ${relay_time} seconds (${n} of 5)"
+        networksetup -setairportpower "${wifi}" on
+        echo "Spoofing ${wifi} to $a for 90 seconds ($n of 21)"
         n=$((n+1))
         sleep ${relay_time}
     done
