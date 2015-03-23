@@ -31,14 +31,14 @@
 relay_time="90"
 sleep_time="10"
 
-wservice=`/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airport)'`
+wservice=$(/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airport)')
 wifi=$(networksetup -listallhardwareports | awk "/${wservice}/,/Ethernet/"' getline { print $2 }')
 
 WirelessMAC=$(networksetup -getmacaddress "${wifi}" | awk '{print $3}')
 echo "Original MAC address is: $WirelessMAC"
 
 function notify {
-    if [ -z ${speak} ] ; then
+    if [ -z "${speak}" ] ; then
         echo "${@}" ;
     else
         say --interactive=green "${@}" ;
@@ -47,9 +47,9 @@ function notify {
 }
 
 function cleanup {
-    sudo ifconfig ${wifi} lladdr ${WirelessMAC}
-    networksetup -setairportpower ${wifi} off
-    networksetup -setairportpower ${wifi} on
+    sudo ifconfig "${wifi}" lladdr "${WirelessMAC}"
+    networksetup -setairportpower "${wifi}" off
+    networksetup -setairportpower "${wifi}" on
 
     echo "Cycling of Relays has completed, MAC address reverted."
     notify "Time to check your street passes!"
@@ -78,7 +78,6 @@ do
     case "${option}" in
         h) usage ; exit ;;
         s) speak=1 ;;
-        c) count=${OPTARG} ;;
         *) usage ; exit 1 ;
     esac
 done
@@ -97,9 +96,6 @@ then
     # To use full mode: ./relaymyhome full
     # Check the repo at github for more information.
 
-    # Set the base MAC address
-    baseAddr="4E:53:50:4F:4F:"
-
     # Create an array for the last octet of the mac address, limited range.
     Addr=($(for X in {0..159} ; do echo ${X} | awk '{printf "%s%02X ", "4E:53:50:4F:4F:", $1}'; done ;))
 
@@ -112,15 +108,15 @@ then
       echo "Quick Mode enabled. Randomly seeding ${num} addresses from full list."
     fi
 
-    for ((a=1; a<=$num; a++));
+    for ((a=1; a<=num; a++));
     do
         selectedAddr=${Addr[$RANDOM % ${#Addr[@]} ]}
         echo "Cycling WiFi..."
-        sudo ifconfig $wifi lladdr $selectedAddr
-        networksetup -setairportpower $wifi off
+        sudo ifconfig "${wifi}" lladdr $selectedAddr
+        networksetup -setairportpower "${wifi}" off
         sleep ${sleep_time}
-        networksetup -setairportpower $wifi on
-        echo "Spoofing $wifi to $selectedAddr for ${relay_time} seconds ($a of $num)"
+        networksetup -setairportpower "${wifi}" on
+        echo "Spoofing ${wifi} to ${selectedAddr} for ${relay_time} seconds ($a of $num)"
         sleep ${relay_time}
     done
 
@@ -157,11 +153,11 @@ else
     for a in "${addr[@]}"
     do
         echo "Cycling WiFi..."
-        sudo ifconfig $wifi lladdr $a
-        networksetup -setairportpower $wifi off
+        sudo ifconfig "${wifi}" lladdr $a
+        networksetup -setairportpower "${wifi}" off
         sleep ${sleep_time}
-        networksetup -setairportpower $wifi on
-        echo "Spoofing $wifi to $a for 90 seconds ($n of 21)"
+        networksetup -setairportpower "${wifi}" on
+        echo "Spoofing ${wifi} to $a for 90 seconds ($n of 21)"
         n=$((n+1))
         sleep ${relay_time}
     done
