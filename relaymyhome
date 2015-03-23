@@ -32,7 +32,7 @@ relay_time="90"
 sleep_time="10"
 
 wservice=`/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airport)'`
-wifi=$(networksetup -listallhardwareports | awk "/$wservice/,/Ethernet/"' getline { print $2 }')
+wifi=$(networksetup -listallhardwareports | awk "/${wservice}/,/Ethernet/"' getline { print $2 }')
 
 WirelessMAC=$(networksetup -getmacaddress "${wifi}" | awk '{print $3}')
 echo "Original MAC address is: $WirelessMAC"
