@@ -42,14 +42,14 @@ sleep_time=5
 
 ### Set some functions
 function date-echo {
-  echo "$(date -j '+%F %T%z' | sed -E 's/(..)$/:\1/') $@" ;
+  date "+%F %T%z $*" ;
 }
 
 function cleanup() {
-  networksetup -setairportpower $wifi on
-  sudo ifconfig ${wifi} lladdr ${wirelessMAC}
-  networksetup -setairportpower $wifi off
-  #networksetup -setairportpower $wifi on
+  networksetup -setairportpower "${wifi}" on
+  sudo ifconfig "${wifi}" lladdr "${wirelessMAC}"
+  networksetup -setairportpower "${wifi}" off
+  #networksetup -setairportpower "${wifi}" on
 }
 
 function ctrl_c() {
@@ -95,33 +95,37 @@ offset_black="b"
 
 wservice=$(/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airport)')
 wifi=$(networksetup -listallhardwareports | awk "/$wservice/,/Ethernet/"' getline { print $2 }')
-wirelessMAC=$(networksetup -getmacaddress $wifi | awk '{print $3}')
+wirelessMAC=$(networksetup -getmacaddress "${wifi}" | awk '{print $3}')
 echo "Original MAC address is: $wirelessMAC"
 
 ### Shuffle the last digits so we don't always start with 0
 shuffled_digits=( $(echo {0..9} {a..f} | xargs -n1 -P1 echo | gsort -R) ) ;
-echo "Shuffled digits: ${shuffled_digits[@]}"
+echo "Shuffled digits: ${shuffled_digits[*]}"
 
-networksetup -setairportpower ${wifi} on
+networksetup -setairportpower "${wifi}" on
 
+# TODO: make this whole next section more elegant.
 ### Do the actual spoofing
 i=0
 while [ $i -lt 1 ] ; do 
   j=0
-  for this_digit in ${shuffled_digits[@]} ; do
+  for this_digit in "${shuffled_digits[@]}" ; do
     let j=${j}+1 ;
     this_mac="${mac_prefix}${offset_black}${this_digit}"
     date-echo "Setting ${wifi} MAC to ${this_mac} ${i}/${j}"
-    ifconfig ${wifi} ether ${this_mac} || echo "Failed to set MAC address"
+    # TODO: turn this next line into a function with proper error checking, debug and verbose handling
+    ifconfig "${wifi}" ether "${this_mac}" || echo "Failed to set MAC address"
     date-echo "Powering off wifi"
-    networksetup -setairportpower ${wifi} off
+    # TODO: turn this next line into a function with proper error checking, debug and verbose handling
+    networksetup -setairportpower "${wifi}" off
     sleep ${sleep_time} ;
     date-echo "Powering on wifi"
-    networksetup -setairportpower ${wifi} on
+    # TODO: turn this next line into a function with proper error checking, debug and verbose handling
+    networksetup -setairportpower "${wifi}" on
     date-echo "Waiting for ${relay_time} seconds"
     sleep ${relay_time} ; 
   done
   let i=${i:-0}+1
 done
 
-networksetup -setairportpower ${wifi} off
+networksetup -setairportpower "${wifi}" off
