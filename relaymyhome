@@ -154,10 +154,10 @@ elif [[ $1 == "file" ]]; then
         for a in "${macAddresses[@]}"
         do
         echo "Cycling WiFi..."
-        # sudo ifconfig "${wifi}" lladdr $a
-        # networksetup -setairportpower "${wifi}" off
-        # sleep ${sleep_time}
-        # networksetup -setairportpower "${wifi}" on
+        sudo ifconfig "${wifi}" lladdr $a
+        networksetup -setairportpower "${wifi}" off
+        sleep ${sleep_time}
+        networksetup -setairportpower "${wifi}" on
         echo "Spoofing ${wifi} to $a for 90 seconds ($n of $currentIndex)"
         n=$((n+1))
         # sleep ${relay_time}
