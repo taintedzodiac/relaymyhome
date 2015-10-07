@@ -65,9 +65,13 @@ function ctrl_c {
 }
 
 function usage {
-    echo "$0 [-c count] [-s]" 
-    echo "c: the number of MAC addresses to cycle through."
-    echo "s: audibly speak when the script is done"
+    echo "$0 [ full | quick | file filename] [-s]" 
+    echo "full: will seed 5 randomly selected addresses from the full list"
+    echo "quick: will seed 2 randomly selected addresses from the full list"
+    echo "file filename: will seed all the mac address from the file. Please write one address per line"
+    echo "no option: will seed all the five Nintendo World relays and the sixteen Homepass relays. "
+    echo "-s: audibly speak when the script is done"
+    echo 
 }
 
 # trap keyboard interrupt (control-c) or unexpected quit
@@ -90,7 +94,7 @@ shift $((OPTIND - 1))
 ### * Parse other cli options for verbosity and say vs silent
 ### * Put the list of MACs into a sqlite3 db and query only oldest visited ones?
 
-if  [[ $1 == "full" || $1 == "fuller" || $1 == "quick" ]]
+if  [[ $1 == "full" || $1 == "quick" ]]
 then
     # Generate a full list of 160 MACs when "full" mode is specified
     # To use full mode: ./relaymyhome full
@@ -119,6 +123,52 @@ then
         echo "Spoofing ${wifi} to ${selectedAddr} for ${relay_time} seconds ($a of $num)"
         sleep ${relay_time}
     done
+
+elif [[ $1 == "file" ]]; then
+    #we must read from a file. The file must be specified on the next argument, and exist, for this to work
+    if [[ -z "$2" ]]; then
+        #the variable is not set, show the usage
+        usage
+        exit 1
+
+    fi
+    if [[ -f $2 && -s $2 ]]; then
+        currentIndex=0
+        macAddresses=()
+        #read the file. We need to save every address to the address array, if the address is a valid MAC
+        while read line; do
+            #check if the line is a MAC Address. if so, add it to the current array
+            if [[ "$line" =~ ^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$ ]]; then
+                #The line is a valid mac address, so we can add if
+                echo "Addding line ${line} to Spoofing list"
+                macAddresses[currentIndex]=$line
+                currentIndex+=1
+            else
+                #no line, skipping
+                echo "Invalid line '${line}', skipping"
+            fi
+        done < $2
+
+        n=0
+        #file read, start start the spoofing
+        for a in "${macAddresses[@]}"
+        do
+        echo "Cycling WiFi..."
+        # sudo ifconfig "${wifi}" lladdr $a
+        # networksetup -setairportpower "${wifi}" off
+        # sleep ${sleep_time}
+        # networksetup -setairportpower "${wifi}" on
+        echo "Spoofing ${wifi} to $a for 90 seconds ($n of $currentIndex)"
+        n=$((n+1))
+        # sleep ${relay_time}
+        done
+    else
+        echo "File $2 does not exists, or is empty"
+        # as we did not use the function to change the mac address, no cleanup is needed.
+        #exit with error
+        exit 1
+    fi
+
 
 
 else
