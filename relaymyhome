@@ -120,6 +120,7 @@ then
         networksetup -setairportpower "${wifi}" off
         sleep ${sleep_time}
         networksetup -setairportpower "${wifi}" on
+        sleep ${sleep_time}
         echo "Spoofing ${wifi} to ${selectedAddr} for ${relay_time} seconds ($a of $num)"
         sleep ${relay_time}
     done
@@ -141,26 +142,26 @@ elif [[ $1 == "file" ]]; then
             if [[ "$line" =~ ^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$ ]]; then
                 #The line is a valid mac address, so we can add if
                 echo "Addding line ${line} to Spoofing list"
-                macAddresses[currentIndex]=$line
-                currentIndex+=1
+                macAddresses[$currentIndex]=$line
+                currentIndex=$((currentIndex+1))
             else
                 #no line, skipping
                 echo "Invalid line '${line}', skipping"
             fi
         done < $2
 
-        n=0
+        n=1
         #file read, start start the spoofing
         for a in "${macAddresses[@]}"
         do
-        echo "Cycling WiFi..."
-        sudo ifconfig "${wifi}" lladdr $a
-        networksetup -setairportpower "${wifi}" off
-        sleep ${sleep_time}
-        networksetup -setairportpower "${wifi}" on
-        echo "Spoofing ${wifi} to $a for 90 seconds ($n of $currentIndex)"
-        n=$((n+1))
-        # sleep ${relay_time}
+            echo "Cycling WiFi..."
+            sudo ifconfig "${wifi}" lladdr $a
+            networksetup -setairportpower "${wifi}" off
+            sleep ${sleep_time}
+            networksetup -setairportpower "${wifi}" on
+            echo "Spoofing ${wifi} to $a for 90 seconds ($n of $currentIndex)"
+            n=$((n+1))
+            sleep ${relay_time}
         done
     else
         echo "File $2 does not exists, or is empty"
