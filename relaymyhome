@@ -65,12 +65,13 @@ function ctrl_c {
 }
 
 function usage {
-    echo "$0 [ full | quick | file filename] [-s]" 
+    echo "$0 [ full | quick | file filename] [-s] [-h]" 
     echo "full: will seed 5 randomly selected addresses from the full list"
     echo "quick: will seed 2 randomly selected addresses from the full list"
-    echo "file filename: will seed all the mac address from the file. Please write one address per line"
+    echo "file filename: will seed all the mac address from the file filename. Please write one address per line"
     echo "no option: will seed all the five Nintendo World relays and the sixteen Homepass relays. "
     echo "-s: audibly speak when the script is done"
+    echo "-h: show this help"
     echo 
 }
 
@@ -137,7 +138,6 @@ done
 shift $((OPTIND - 1))
 
 ### TODO:
-### * Make most of this into functions
 ### * Parse other cli options for verbosity and say vs silent
 ### * Put the list of MACs into a sqlite3 db and query only oldest visited ones?
 
