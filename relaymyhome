@@ -28,7 +28,7 @@
 # Tested in OS X 10.8 (Mountain Lion) and Mavericks
 
 ### The time we will pause on each MAC address
-relay_time="90"
+relay_time="10"
 sleep_time="10"
 
 wservice=$(/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airport)')
@@ -89,11 +89,13 @@ function generateFullMacAddressList {
 ## and spoof it over the current WIFI interface on the Mac
 function spooofMacAddress {
     echo "Cycling WiFi..."
-    sudo ifconfig "${wifi}" lladdr $1
-    networksetup -setairportpower "${wifi}" off
+    #sudo ifconfig "${wifi}" lladdr $1
+    echo "disabling wifi"
+    #networksetup -setairportpower "${wifi}" off
     sleep ${sleep_time}
-    networksetup -setairportpower "${wifi}" on
-    sleep ${sleep_time}
+    echo "enabling wifi"
+    #networksetup -setairportpower "${wifi}" on
+    sleep ${relay_time}
 }
 
 function generateNintendoWorldAndHomePasses {
@@ -225,7 +227,7 @@ case "$1" in
 
         for currentAddress in "${currentAddressddr[@]}"
         do
-            echo "Spoofing ${wifi} to $currentAddress for 90 seconds ($n of 21)"
+            echo "Spoofing ${wifi} to $currentAddress for ${relay_time} seconds ($n of 21)"
             spooofMacAddress currentAddress
             n=$((n+1))
   
