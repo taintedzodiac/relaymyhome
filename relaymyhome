@@ -94,126 +94,125 @@ shift $((OPTIND - 1))
 ### * Parse other cli options for verbosity and say vs silent
 ### * Put the list of MACs into a sqlite3 db and query only oldest visited ones?
 
-if  [[ $1 == "full" || $1 == "quick" ]]
-then
-    # Generate a full list of 160 MACs when "full" mode is specified
-    # To use full mode: ./relaymyhome full
-    # Check the repo at github for more information.
+case "$1" in
+    "full" | "quick" )
+        # Generate a full list of 160 MACs when "full" mode is specified
+        # To use full mode: ./relaymyhome full
+        # Check the repo at github for more information.
 
-    # Create an array for the last octet of the mac address, limited range.
-    Addr=($(for X in {0..159} ; do echo ${X} | awk '{printf "%s%02X ", "4E:53:50:4F:4F:", $1}'; done ;))
+        # Create an array for the last octet of the mac address, limited range.
+        Addr=($(for X in {0..159} ; do echo ${X} | awk '{printf "%s%02X ", "4E:53:50:4F:4F:", $1}'; done ;))
 
-    if [[ $1 == "full" ]]
-    then
-      num=5
-      echo "Full Mode enabled. Randomly seeding five addresses from full list."
-    else
-      num=2
-      echo "Quick Mode enabled. Randomly seeding ${num} addresses from full list."
-    fi
+        if [[ $1 == "full" ]]
+        then
+            num=5
+            echo "Full Mode enabled. Randomly seeding five addresses from full list."
+        else
+            num=2
+            echo "Quick Mode enabled. Randomly seeding ${num} addresses from full list."
+        fi
 
-    for ((a=1; a<=num; a++));
-    do
-        selectedAddr=${Addr[$RANDOM % ${#Addr[@]} ]}
-        echo "Cycling WiFi..."
-        sudo ifconfig "${wifi}" lladdr $selectedAddr
-        networksetup -setairportpower "${wifi}" off
-        sleep ${sleep_time}
-        networksetup -setairportpower "${wifi}" on
-        sleep ${sleep_time}
-        echo "Spoofing ${wifi} to ${selectedAddr} for ${relay_time} seconds ($a of $num)"
-        sleep ${relay_time}
-    done
+        for ((a=1; a<=num; a++));
+        do
+            selectedAddr=${Addr[$RANDOM % ${#Addr[@]} ]}
+            echo "Cycling WiFi..."
+            sudo ifconfig "${wifi}" lladdr $selectedAddr
+            networksetup -setairportpower "${wifi}" off
+            sleep ${sleep_time}
+            networksetup -setairportpower "${wifi}" on
+            sleep ${sleep_time}
+            echo "Spoofing ${wifi} to ${selectedAddr} for ${relay_time} seconds ($a of $num)"
+            sleep ${relay_time}
+        done  ;;
 
-elif [[ $1 == "file" ]]; then
-    #we must read from a file. The file must be specified on the next argument, and exist, for this to work
-    if [[ -z "$2" ]]; then
-        #the variable is not set, show the usage
-        usage
-        exit 1
+    "file" ) 
+            #we must read from a file. The file must be specified on the next argument, and exist, for this to work
+        if [[ -z "$2" ]]; then
+            #the variable is not set, show the usage
+            usage
+            exit 1
+        fi
 
-    fi
-    if [[ -f $2 && -s $2 ]]; then
-        currentIndex=0
-        macAddresses=()
-        #read the file. We need to save every address to the address array, if the address is a valid MAC
-        while read line; do
-            #check if the line is a MAC Address. if so, add it to the current array
-            if [[ "$line" =~ ^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$ ]]; then
-                #The line is a valid mac address, so we can add if
-                echo "Addding line ${line} to Spoofing list"
-                macAddresses[$currentIndex]=$line
-                currentIndex=$((currentIndex+1))
-            else
-                #no line, skipping
-                echo "Invalid line '${line}', skipping"
-            fi
-        done < $2
+        if [[ -f $2 && -s $2 ]]; then
+            currentIndex=0
+            macAddresses=()
+            #read the file. We need to save every address to the address array, if the address is a valid MAC
+            while read line; do
+                #check if the line is a MAC Address. if so, add it to the current array
+                if [[ "$line" =~ ^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$ ]]; then
+                    #The line is a valid mac address, so we can add if
+                    echo "Addding line ${line} to Spoofing list"
+                    macAddresses[$currentIndex]=$line
+                    currentIndex=$((currentIndex+1))
+                else
+                    #no line, skipping
+                    echo "Invalid line '${line}', skipping"
+                fi
+            done < $2
 
+            n=1
+            #file read, start start the spoofing
+            for a in "${macAddresses[@]}"
+            do
+                echo "Cycling WiFi..."
+                sudo ifconfig "${wifi}" lladdr $a
+                networksetup -setairportpower "${wifi}" off
+                sleep ${sleep_time}
+                networksetup -setairportpower "${wifi}" on
+                echo "Spoofing ${wifi} to $a for 90 seconds ($n of $currentIndex)"
+                n=$((n+1))
+                sleep ${relay_time}
+            done
+        else
+            echo "File $2 does not exists, or is empty"
+            # as we did not use the function to change the mac address, no cleanup is needed.
+            #exit with error
+            exit 1
+        fi   ;;
+    "" )
+        # This set of MACs will be used in standard mode
+        # Taken from: https://docs.google.com/spreadsheet/ccc?key=0AvvH5W4E2lIwdEFCUkxrM085ZGp0UkZlenp6SkJablE#gid=0
+        # Usage: ./relaymyhome
+        addr[0]='00:0D:67:15:2D:82'
+        addr[1]='00:0D:67:15:D7:21'
+        addr[2]='00:0D:67:15:D5:44'
+        addr[3]='00:0D:67:15:D2:59'
+        addr[4]='00:0D:67:15:D6:FD'
+        addr[5]='4E:53:50:4F:4F:40'
+        addr[6]='4E:53:50:4F:4F:41'
+        addr[7]='4E:53:50:4F:4F:42'
+        addr[8]='4E:53:50:4F:4F:43'
+        addr[9]='4E:53:50:4F:4F:44'
+        addr[10]='4E:53:50:4F:4F:45'
+        addr[11]='4E:53:50:4F:4F:46'
+        addr[12]='4E:53:50:4F:4F:47'
+        addr[13]='4E:53:50:4F:4F:48'
+        addr[14]='4E:53:50:4F:4F:49'
+        addr[15]='4E:53:50:4F:4F:4A'
+        addr[16]='4E:53:50:4F:4F:4B'
+        addr[17]='4E:53:50:4F:4F:4C'
+        addr[18]='4E:53:50:4F:4F:4D'
+        addr[19]='4E:53:50:4F:4F:4E'
+        addr[20]='4E:53:50:4F:4F:4F'
+
+        echo "Standard Mode enabled. Connecting to the five Nintendo World relays and the sixteen Homepass relays."
         n=1
-        #file read, start start the spoofing
-        for a in "${macAddresses[@]}"
+
+        for a in "${addr[@]}"
         do
             echo "Cycling WiFi..."
             sudo ifconfig "${wifi}" lladdr $a
             networksetup -setairportpower "${wifi}" off
             sleep ${sleep_time}
             networksetup -setairportpower "${wifi}" on
-            echo "Spoofing ${wifi} to $a for 90 seconds ($n of $currentIndex)"
+            echo "Spoofing ${wifi} to $a for 90 seconds ($n of 21)"
             n=$((n+1))
             sleep ${relay_time}
         done
-    else
-        echo "File $2 does not exists, or is empty"
-        # as we did not use the function to change the mac address, no cleanup is needed.
-        #exit with error
-        exit 1
-    fi
-
-
-
-else
-    # This set of MACs will be used in standard mode
-    # Taken from: https://docs.google.com/spreadsheet/ccc?key=0AvvH5W4E2lIwdEFCUkxrM085ZGp0UkZlenp6SkJablE#gid=0
-    # Usage: ./relaymyhome
-    addr[0]='00:0D:67:15:2D:82'
-    addr[1]='00:0D:67:15:D7:21'
-    addr[2]='00:0D:67:15:D5:44'
-    addr[3]='00:0D:67:15:D2:59'
-    addr[4]='00:0D:67:15:D6:FD'
-    addr[5]='4E:53:50:4F:4F:40'
-    addr[6]='4E:53:50:4F:4F:41'
-    addr[7]='4E:53:50:4F:4F:42'
-    addr[8]='4E:53:50:4F:4F:43'
-    addr[9]='4E:53:50:4F:4F:44'
-    addr[10]='4E:53:50:4F:4F:45'
-    addr[11]='4E:53:50:4F:4F:46'
-    addr[12]='4E:53:50:4F:4F:47'
-    addr[13]='4E:53:50:4F:4F:48'
-    addr[14]='4E:53:50:4F:4F:49'
-    addr[15]='4E:53:50:4F:4F:4A'
-    addr[16]='4E:53:50:4F:4F:4B'
-    addr[17]='4E:53:50:4F:4F:4C'
-    addr[18]='4E:53:50:4F:4F:4D'
-    addr[19]='4E:53:50:4F:4F:4E'
-    addr[20]='4E:53:50:4F:4F:4F'
-
-    echo "Standard Mode enabled. Connecting to the five Nintendo World relays and the sixteen Homepass relays."
-    n=1
-
-    for a in "${addr[@]}"
-    do
-        echo "Cycling WiFi..."
-        sudo ifconfig "${wifi}" lladdr $a
-        networksetup -setairportpower "${wifi}" off
-        sleep ${sleep_time}
-        networksetup -setairportpower "${wifi}" on
-        echo "Spoofing ${wifi} to $a for 90 seconds ($n of 21)"
-        n=$((n+1))
-        sleep ${relay_time}
-    done
-fi
+        ;;
+    * )
+        usage ;;
+esac
 
 # ... and we are done
-
 cleanup
