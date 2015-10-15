@@ -28,7 +28,7 @@
 # Tested in OS X 10.8 (Mountain Lion) and Mavericks
 
 ### The time we will pause on each MAC address
-relay_time="10"
+relay_time="90"
 sleep_time="10"
 
 wservice=$(/usr/sbin/networksetup -listallnetworkservices | grep -Ei '(wi-fi|airport)')
@@ -89,12 +89,10 @@ function generateFullMacAddressList {
 ## and spoof it over the current WIFI interface on the Mac
 function spooofMacAddress {
     echo "Cycling WiFi..."
-    #sudo ifconfig "${wifi}" lladdr $1
-    echo "disabling wifi"
-    #networksetup -setairportpower "${wifi}" off
+    sudo ifconfig "${wifi}" lladdr $1
+    networksetup -setairportpower "${wifi}" off
     sleep ${sleep_time}
-    echo "enabling wifi"
-    #networksetup -setairportpower "${wifi}" on
+    networksetup -setairportpower "${wifi}" on
     sleep ${relay_time}
 }
 
@@ -204,7 +202,7 @@ case "$1" in
             for a in "${macAddresses[@]}"
             do
                 echo "Spoofing ${wifi} to $a for 90 seconds ($n of $currentIndex)"
-                spooofMacAddress a
+                spooofMacAddress $a
                 n=$((n+1))
             done
             cleanup
