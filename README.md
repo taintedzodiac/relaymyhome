@@ -4,6 +4,12 @@ OSX Bash Script for automating the process of getting Nintendo 3DS StreetPass hi
 
 What's New
 ==========
+
+**v 1.2**
+
+* OSX El Capitan support
+* Added a new option to support MAC addresses from files, so you can add your own
+
 **v 1.1**
 
 * OSX Yosemite support
@@ -41,7 +47,7 @@ Installation & Usage (Mac OS X 10.8)
 8. Now type **./relaymyhome full** and you should see the script do its thing. If you get an error that stops the script, something went wrong. The script takes about 8 minutes to run, after which you should have a list full of StreetPass hits on your 3DS.
 9. Once you have greeted your new visitors in the StreetPass Plaza, you can run the script again to get another batch of StreetPasses. You should be able to run the script many times before you will need to wait for the eight hour cooldown on hitting the same relay twice.
 
-Installation & Usage (Mac OS X 10.9 & 10.10)
+Installation & Usage (Mac OS X 10.9,  10.10 and 10.11)
 ====================================
 1. Download the script file from this page. The easy way is to download the ZIP file using the "Download ZIP" button on the bottom right of this page. Double click the downloaded file to unzip it.
 2. Move the **relaymyhome** file to somewhere you can access (if you're completely unfamiliar with using the OSX Terminal, stick it in **Documents**).
