@@ -36,7 +36,7 @@ wifi=$(networksetup -listallhardwareports | awk "/${wservice}/,/Ethernet/"' getl
 
 WirelessMAC=$(networksetup -getmacaddress "${wifi}" | awk '{print $3}')
 echo "Original MAC address is: $WirelessMAC"
-
+MACS=()
 function notify {
     if [ -z "${speak}" ] ; then
         echo "${@}" ;
@@ -80,8 +80,7 @@ function usage {
 ## can use either all of it, or only a portion of it
 function generateFullMacAddressList {
     # Create an array for the last octet of the mac address, limited range.
-    fullList=($(for X in {0..159} ; do echo ${X} | awk '{printf "%s%02X ", "4E:53:50:4F:4F:", $1}'; done ;))
-    echo $fullList
+    MACS=($(for X in {0..159} ; do echo ${X} | awk '{printf "%s%02X ", "4E:53:50:4F:4F:", $1}'; done ;))
 }
 
 
@@ -98,29 +97,27 @@ function spooofMacAddress {
 
 function generateNintendoWorldAndHomePasses {
 
-    addresses[0]='00:0D:67:15:2D:82'
-    addresses[1]='00:0D:67:15:D7:21'
-    addresses[2]='00:0D:67:15:D5:44'
-    addresses[3]='00:0D:67:15:D2:59'
-    addresses[4]='00:0D:67:15:D6:FD'
-    addresses[5]='4E:53:50:4F:4F:40'
-    addresses[6]='4E:53:50:4F:4F:41'
-    addresses[7]='4E:53:50:4F:4F:42'
-    addresses[8]='4E:53:50:4F:4F:43'
-    addresses[9]='4E:53:50:4F:4F:44'
-    addresses[10]='4E:53:50:4F:4F:45'
-    addresses[11]='4E:53:50:4F:4F:46'
-    addresses[12]='4E:53:50:4F:4F:47'
-    addresses[13]='4E:53:50:4F:4F:48'
-    addresses[14]='4E:53:50:4F:4F:49'
-    addresses[15]='4E:53:50:4F:4F:4A'
-    addresses[16]='4E:53:50:4F:4F:4B'
-    addresses[17]='4E:53:50:4F:4F:4C'
-    addresses[18]='4E:53:50:4F:4F:4D'
-    addresses[19]='4E:53:50:4F:4F:4E'
-    addresses[20]='4E:53:50:4F:4F:4F'
-
-    echo $addresses
+    MACS[0]='00:0D:67:15:2D:82'
+    MACS[1]='00:0D:67:15:D7:21'
+    MACS[2]='00:0D:67:15:D5:44'
+    MACS[3]='00:0D:67:15:D2:59'
+    MACS[4]='00:0D:67:15:D6:FD'
+    MACS[5]='4E:53:50:4F:4F:40'
+    MACS[6]='4E:53:50:4F:4F:41'
+    MACS[7]='4E:53:50:4F:4F:42'
+    MACS[8]='4E:53:50:4F:4F:43'
+    MACS[9]='4E:53:50:4F:4F:44'
+    MACS[10]='4E:53:50:4F:4F:45'
+    MACS[11]='4E:53:50:4F:4F:46'
+    MACS[12]='4E:53:50:4F:4F:47'
+    MACS[13]='4E:53:50:4F:4F:48'
+    MACS[14]='4E:53:50:4F:4F:49'
+    MACS[15]='4E:53:50:4F:4F:4A'
+    MACS[16]='4E:53:50:4F:4F:4B'
+    MACS[17]='4E:53:50:4F:4F:4C'
+    MACS[18]='4E:53:50:4F:4F:4D'
+    MACS[19]='4E:53:50:4F:4F:4E'
+    MACS[20]='4E:53:50:4F:4F:4F'
 }
 
 # trap keyboard interrupt (control-c) or unexpected quit
@@ -147,7 +144,7 @@ case "$1" in
     # Check the repo at github for more information.
     "full" | "quick" )
         
-        addresses=$(generateFullMacAddressList)
+        generateFullMacAddressList
         num=0
 
         case "$1" in
@@ -162,7 +159,7 @@ case "$1" in
 
         for ((a=1; a<=num; a++));
         do
-            selectedAddr=${addresses[$RANDOM % ${#addresses[@]} ]}
+            selectedAddr=${MACS[$RANDOM % ${#MACS[@]} ]}
             echo "Spoofing ${wifi} to ${selectedAddr} for ${relay_time} seconds ($a of $num)"
             spooofMacAddress selectedAddr
         done  
@@ -182,14 +179,14 @@ case "$1" in
 
         if [[ -f $2 && -s $2 ]]; then
             currentIndex=0
-            macAddresses=()
+            MACS=()
             #read the file. We need to save every address to the address array, if the address is a valid MAC
             while read line; do
                 #check if the line is a MAC Address. if so, add it to the current array
                 if [[ "$line" =~ ^([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2}$ ]]; then
                     #The line is a valid mac address, so we can add if
                     echo "Addding line ${line} to Spoofing list"
-                    macAddresses[$currentIndex]=$line
+                    MACS[$currentIndex]=$line
                     currentIndex=$((currentIndex+1))
                 else
                     #no line, skipping
@@ -199,7 +196,7 @@ case "$1" in
 
             n=1
             #file read, start start the spoofing
-            for a in "${macAddresses[@]}"
+            for a in "${MACS[@]}"
             do
                 echo "Spoofing ${wifi} to $a for 90 seconds ($n of $currentIndex)"
                 spooofMacAddress $a
@@ -218,15 +215,14 @@ case "$1" in
     # Usage: ./relaymyhome
     "" )
         
-        currentAddresses=$(generateNintendoWorldAndHomePasses)
-
+        generateNintendoWorldAndHomePasses
+        
         echo "Standard Mode enabled. Connecting to the five Nintendo World relays and the sixteen Homepass relays."
         n=1
-
-        for currentAddress in "${currentAddresses[@]}"
+        for currentAddress in "${MACS[@]}"
         do
             echo "Spoofing ${wifi} to $currentAddress for ${relay_time} seconds ($n of 21)"
-            spooofMacAddress currentAddress
+            spooofMacAddress $currentAddress
             n=$((n+1))
   
         done
