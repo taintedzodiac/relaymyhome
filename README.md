@@ -40,7 +40,7 @@ Installation & Usage (Mac OS X 10.8)
 ====================================
 1. Download the script file from this page. The easy way is to download the ZIP file using the "Download ZIP" button on the bottom right of this page. Double click the downloaded file to unzip it.
 2. Move the **relaymyhome** file to somewhere you can access (if you're completely unfamiliar with using the OSX Terminal, stick it in **Documents**).
-3. Using the WiFi icon in your menu bar at the top of the screen, select "Create Network..." and create a network named **NZ@McD1** (previously attwifi, which should also still work) and make sure to set *Security* to **None** (you can ignore the Channel option).
+3. Using the WiFi icon in your menu bar at the top of the screen, select "Create Network..." and create a network named **attwifi** (previously NZ@McD1, which no longer functions) and make sure to set *Security* to **None** (you can ignore the Channel option).
 4. Open **System Preferences**, then select **Sharing**. Select **Internet Sharing**, then set "Share your connection from:" to **Ethernet**, and check off **WiFi** in the "To computers using" box. Finally, check off **Internet Sharing** and click **Start** at the prompt.
 5. Open **Terminal** (in your Applications folder under *Utilities*), and navigate to the location you placed **relaymyhome** -- if you put it in **Documents**, then in *Terminal* type: **cd ~/Documents**
 7. If this is the first time you are running the script, in Terminal enter the command: **chmod +x relaymyhome**
@@ -51,7 +51,7 @@ Installation & Usage (Mac OS X 10.9,  10.10 and 10.11)
 ====================================
 1. Download the script file from this page. The easy way is to download the ZIP file using the "Download ZIP" button on the bottom right of this page. Double click the downloaded file to unzip it.
 2. Move the **relaymyhome** file to somewhere you can access (if you're completely unfamiliar with using the OSX Terminal, stick it in **Documents**).
-3. Open **System Preferences**, then select **Sharing**. Select **Internet Sharing**, then set "Share your connection from:" to **Ethernet**, and check off **WiFi** in the "To computers using" box. Click the **Wi-Fi Options** button, enter **NZ@McD1** as the Network Name, leave Channel default and ensure Security is set to **None**. Finally, check off **Internet Sharing** and click **Start** at the prompt.
+3. Open **System Preferences**, then select **Sharing**. Select **Internet Sharing**, then set "Share your connection from:" to **Ethernet**, and check off **WiFi** in the "To computers using" box. Click the **Wi-Fi Options** button, enter **attwifi** as the Network Name, leave Channel default and ensure Security is set to **None**. Finally, check off **Internet Sharing** and click **Start** at the prompt.
 4. Open **Terminal** (in your Applications folder under *Utilities*), and navigate to the location you placed **relaymyhome** -- if you put it in **Documents**, then in *Terminal* type: **cd ~/Documents**
 5. If this is the first time you are running the script, in Terminal enter the command: **chmod +x relaymyhome**
 6. Now type **./relaymyhome full** and you should see the script do its thing. If you get an error that stops the script, something went wrong. The script takes about 8 minutes to run, after which you should have a list full of StreetPass hits on your 3DS.
