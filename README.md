@@ -1,3 +1,5 @@
+> **Maintainer's note (2018-12-19)**: although relaymyhome has not been updated since El Capitan, please feel free to submit an issue if newer versions of MacOS give you any issues.
+
 relaymyhome
 ===========
 MacOS Bash Script for automating the process of getting Nintendo 3DS StreetPass hits via Internet Connection Sharing. Gathers the maximum of ten (10) StreetPass hits within a few minutes. Can be re-run many times per day if using "full" mode.
